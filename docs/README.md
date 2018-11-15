@@ -7,7 +7,8 @@ Unreal Engine has a reasonably good package and modding system.
 Unfortunately, it is largely undocumented, so individuals attempting to use it to load pak files at runtime are left to their own devices (trial and error, mostly) to discover how to get a pak file to load properly.
 Below is a project checklist for ensuring your project is ready to go for pak loading at runtime, but a more thorough explanation is available in the [documentation](https://calben.github.io/unrealpakloaderplugin/).
 
-While some of the content in the documentation may be very obvious to you, I suggest going ahead and giving it all a quick skim as you might find some of the notes will make your life easier.
+
+?> While some of the content in the documentation may be very obvious to you, you may want to go ahead and give it all a quick skim as you might find some of the notes will make your life easier.
 
 ## Adding the Plugin to Your Project
 
