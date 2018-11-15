@@ -1,6 +1,6 @@
 ![logo](_media/icon.svg ':size=200px')
 
-# UnrealPakLoaderPlugin <small>1.0</small>
+# Pak Loader<small>1.0</small>
 
 > Sorting out this pak loading issue once and for all!
 
