@@ -118,7 +118,7 @@ bool UPakLoaderBPLibrary::LoadPakFileAndAddToRegistry(FPakPlatformFile * PakPlat
 	return false;
 }
 
-bool UPakLoaderBPLibrary::LoadPakFileAndAddToRegistry(FString PakFilePath, FString PakMountDirectory)
+FPakPlatformFile* UPakLoaderBPLibrary::LoadPakFileAndAddToRegistry(FString PakFilePath, FString PakMountDirectory)
 {
 	PakMountDirectory = "/" + PakMountDirectory + "/";
 	IPlatformFile* LocalPlatformFile = &FPlatformFileManager::Get().GetPlatformFile();
@@ -133,7 +133,7 @@ bool UPakLoaderBPLibrary::LoadPakFileAndAddToRegistry(FString PakFilePath, FStri
 		if (!PakFile->IsValid())
 		{
 			UE_LOG(LogPakLoader, Log, TEXT("Pak file %s determined invalid."), *PakFilePath);
-			return false;
+			return nullptr;
 		}
 
 		PakFile->SetMountPoint(*PakMountDirectory);

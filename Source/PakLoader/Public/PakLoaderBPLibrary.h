@@ -32,6 +32,6 @@ public:
 
 	static bool LoadPakFileAndAddToRegistry(class FPakPlatformFile* PakPlatform, FString PakFilePath, FString PakMountDirectory);
 
-	static bool LoadPakFileAndAddToRegistry(FString PakFilePath, FString PakMountDirectory);
+	static class FPakPlatformFile* LoadPakFileAndAddToRegistry(FString PakFilePath, FString PakMountDirectory);
 
 };
