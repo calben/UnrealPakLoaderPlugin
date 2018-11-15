@@ -30,6 +30,9 @@ You may either:
 You may either create pak files using the Project Launcher inside the editor or by running the automation tool yourself.
 I recommend creating a batch file or a utility script that will call on the automation tool, as then your team will be reliably using the same build settings.
 
+If you're using Unreal 4.19 or earlier, your DLC will "fail" to build and return an error code.
+Part of the build process is failing, but it doesn't affect your pak file or your asset registry, so it's not really an issue.
+
 ### Preparing with the Project Launcher
 
 1. Go to the project launcher and create a new custom launch profile
@@ -46,8 +49,6 @@ After these steps have been completed, you may run the launch profile to generat
 ### Preparing with a Script
 
 These are recommended parameters when building your pak files.
-Depending on where you are in your project, you may want to switch serverconfig to Shipping.
-You may also need to remove the no compile flag, depending on your needs.
 
 ```
 UE_{{ version }}\\Engine\\Binaries\\DotNET\\AutomationTool.exe
