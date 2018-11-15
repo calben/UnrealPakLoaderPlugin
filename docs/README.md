@@ -34,7 +34,7 @@ I recommend creating a batch file or a utility script that will call on the auto
 If you're using Unreal 4.19 or earlier, your DLC will "fail" to build and return an error code.
 Part of the build process is failing, but it doesn't affect your pak file or your asset registry, so it's not really an issue.
 
-### Preparing with the Project Launcher
+### Via Project Launcher
 
 1. Go to the project launcher and create a new custom launch profile
 1. Give it a name
@@ -47,7 +47,7 @@ Part of the build process is failing, but it doesn't affect your pak file or you
 
 After these steps have been completed, you may run the launch profile to generate the pak file for your pak file.
 
-### Preparing with a Script
+### Via Script
 
 These are recommended parameters when building your pak files.
 
@@ -67,7 +67,7 @@ In theory, this shouldn't be necessary, but I have been unable to correctly pack
 
 ## Loading Pak Files
 
-### Notes On The `FPakPlatformFile*`
+### Notes On `FPakPlatformFile*`
 
 Most of the functions in this library either take in an `FPakPlatformFile` pointer or return one.
 You need to keep the  pointer alive until you are done with your pak file.
@@ -79,17 +79,24 @@ Thus, if it has fallen out of scope, one of the below is likely to happen:
 1. `TryLoad` fails without any specific errors.  If you're not checking the value of the `UObject` pointer that was meant to be returned, you're in for a hard crash.
 1. If the object is a texture file, it's possible that your texture will be filled with garbage data.  I'm still not entirely sure what's going on in this case except that your pointer must have been changed to an address determined to be a valid location containing data that is then read as a raw texture.  I'm surprised Unreal doesn't make more checks to guard against this, but it's a mystery to solve another day!
 
-### Temporary Loading of Single Pak File 
+### Temporary Single Pak File 
 
 After you're sure your project is correctly set up, you can load a pak using `LoadPakFileAndAddToRegistry(FString PakFilePath, FString PakMountDirectory)`.
 By default, you probably want the mount directory and pak file path to be equivalent, for example `auto PakPlatformFile = LoadPakFileAndAddToRegistry("./Test.pak", "Test")`.
 If you're only loading a pak file for a short period, then this method will do the trick.
 After the routine completes, you will be able to access the contents of the pak file in your asset registry under `/Test/*`.
 
-### Loading Multiple Paks or Keeping Paks Loaded
+### Multiple Paks or Permanent
 
+It's best practice to maintain a single `FPakPlatformFile` pointer.
+This has been handled in a few different ways, but I leave it to the user's responsbility to understand this and handle it.
+When using the Pak Loader plugin in my project, I maintained the `FPakPlatformFile*` in my game instance, ensuring that it would be kept alive throughout the entirety of application use.
+The steps that I take are below:
 
-
+1. Add `FPakPlatformFile* PakPlatform` to the project's game instance
+1. 
+1. Before trying to load pak files, call `UPakLoaderBPLibrary::InitLoaderPakPlatformFile(PakPlatform)` to initialise the pak platform for the user's computer.
+1. 
 
 ## Debugging When Using Pak File Loading at Runtime
 
@@ -114,6 +121,7 @@ In Visual Studio, this would be done by opening the properties for the project, 
 
 ## Credits
 
-- 
+- Smogwork's for the guidance provided by their ModSkeleton
+- Konflict (Robert Toth) for the guidance provided by his REcore plugin for Unreal
 - Gil Grib and Ben Marsh at Epic Games for their help with debugging
 - <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
