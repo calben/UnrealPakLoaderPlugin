@@ -3,13 +3,6 @@
 PakLoader is a library that simplifies runtime package loading for Unreal by providing a handful of static functions that abstract Unreal Engine's pak file system.
 The simplest function can open a pak file and load its asset registry to your project's given the path to a `.pak` file and its associated `.bin` file.
 
-Unreal Engine has a reasonably good package and modding system.
-Unfortunately, it is largely undocumented, so individuals attempting to use it to load pak files at runtime are left to their own devices (trial and error, mostly) to discover how to get a pak file to load properly.
-Below is a project checklist for ensuring your project is ready to go for pak loading at runtime, but a more thorough explanation is available in the [documentation](https://calben.github.io/unrealpakloaderplugin/).
-
-
-?> While some of the content in the documentation may be very obvious to you, you may want to go ahead and give it all a quick skim as you might find some of the notes will make your life easier.
-
 ## Adding the Plugin to Your Project
 
 This repository contains only the plugin with its contents at the root directory.
@@ -18,6 +11,12 @@ You may either:
 1. Copy paste the plugin into your Plugins directory under "PakLoader/".
 1. Clone this plugin directly into your Plugins directory.
 1. Use `git submodule add https://github.com/calben/UnrealPakLoaderPlugin Plugins/PakLoader` to maintain this plugin in your project using Git.
+
+Now that the plugin is in your plugin directory...
+
+1. Regenerate Visual Studio Project.
+1. Add PakLoader to the build by adding `PublicDependencyModuleNames.Add("PakLoader");` to your project's `*.Build.cs` under the other adds.
+1. Recompile your project.
 
 ## Project Checklist for Pak Loading
 
@@ -49,7 +48,7 @@ After these steps have been completed, you may run the launch profile to generat
 
 ### Via Script
 
-These are recommended parameters when building your pak files.
+These are recommended parameters when building your pak files for content only DLC.
 
 ```
 UE_{{ version }}\\Engine\\Binaries\\DotNET\\AutomationTool.exe
@@ -93,10 +92,37 @@ This has been handled in a few different ways, but I leave it to the user's resp
 When using the Pak Loader plugin in my project, I maintained the `FPakPlatformFile*` in my game instance, ensuring that it would be kept alive throughout the entirety of application use.
 The steps that I take are below:
 
-1. Add `FPakPlatformFile* PakPlatform` to the project's game instance
-1. 
-1. Before trying to load pak files, call `UPakLoaderBPLibrary::InitLoaderPakPlatformFile(PakPlatform)` to initialise the pak platform for the user's computer.
-1. 
+1. Add `FPakPlatformFile* PakPlatform` to the project's game instance.
+1. Initialize the `PakPlatform` variable by setting it to `new FPakPlatformFile();`.
+1. Before trying to load pak files, call `UPakLoaderBPLibrary::InitLoaderPakPlatformFile(PakPlatform)` to set up the pak platform for the user's computer.
+
+Overall your workflow should look something like the below:
+
+```
+if (Instance != nullptr)
+{
+	Instance->PakPlatform = new FPakPlatformFile();
+	if (UPakLoaderBPLibrary::InitLoaderPakPlatformFile(Instance->PakPlatform))
+	{
+        // there exists some TArray<FString> of pak file names called PakFiles 
+        // that all exist in the RootPath
+		for (FString PakName : PakFiles)
+		{
+			FString PakFilePath = RootPath + "/" + PakName;
+			FPaths::MakeStandardFilename(PakFilePath);
+			if (!UPakLoaderBPLibrary::HasPakFileAlreadyBeenLoaded(PakName))
+			{
+                bool Success = UPakLoaderBPLibrary::LoadPakFileAndAddToRegistry(PakPlatform, PakFilePath, PakName)
+				if (Success)
+				{
+					// assets are now available 
+                    // at /{{ PakName }}/
+                }
+			}
+		}
+	}
+}
+```
 
 ## Debugging When Using Pak File Loading at Runtime
 
